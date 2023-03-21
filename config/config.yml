@@ -1,0 +1,6 @@
+app:
+  environment: 'development'
+  debug: true
+
+datasets:
+  images: 'data/images'
