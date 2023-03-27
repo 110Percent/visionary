@@ -11,7 +11,7 @@ def get_features(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # gray = cv2.convertScaleAbs(gray, alpha=1.5, beta=20)
     sift = cv2.SIFT_create()
-    key_points = sift.detect(gray, None)
+    key_points, descriptors = sift.detectAndCompute(gray, None)
     max_response_point = max(key_points, key=lambda x: x.response)
     key_points = [
         point
@@ -56,6 +56,8 @@ def get_features(img):
     cv2.destroyAllWindows()
     """
     return {
+        "key_points": key_points,
+        "descriptors": descriptors,
         "relative_dist": relative_dist,
         "relative_max_response": relative_max_response_point,
         "max_response": max_response_point.response,

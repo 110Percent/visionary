@@ -4,6 +4,8 @@ import cv2
 
 from config import config
 from src import feature_extraction
+from codebook import generate_codebook
+from vlad import create_vlad_vector
 
 '''
 def difference_score(features1, feature2):
@@ -41,6 +43,10 @@ def preprocess_images():
             filename = os.path.join(root, name)
             image = cv2.imread(filename)
             features = feature_extraction.get_features(image)
+
+            # codebook = generate_codebook(features['descriptors'], name)
+            # create_vlad_vector(codebook, features['descriptors'])
+
             feature_list.append(features)
             images_processed += 1
             if images_processed % 100 == 0:

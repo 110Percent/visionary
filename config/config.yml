@@ -4,3 +4,6 @@ app:
 
 datasets:
   images: 'data/images'
+
+codebook:
+  clusters: 50
