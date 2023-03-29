@@ -13,11 +13,19 @@ def get_features(img):
     sift = cv2.SIFT_create()
     key_points, descriptors = sift.detectAndCompute(gray, None)
     max_response_point = max(key_points, key=lambda x: x.response)
-    key_points = [
-        point
-        for point in key_points
-        if point.response > (max_response_point.response * 0.5)
-    ]
+
+    """
+    new_kp = []
+    new_descriptors = []
+    for i in range(len(key_points)):
+        point = key_points[i]
+        if point.response > (max_response_point.response * 0.5):
+            new_kp.append(point)
+            new_descriptors.append(descriptors[i])
+
+    key_points = tuple(new_kp)
+    descriptors = np.array([[desc] for desc in new_descriptors])
+    """
 
     weights = [point.size for point in key_points]
     mean_point = (

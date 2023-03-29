@@ -44,12 +44,12 @@ def preprocess_images():
             image = cv2.imread(filename)
             features = feature_extraction.get_features(image)
 
-            # codebook = generate_codebook(features['descriptors'], name)
-            # create_vlad_vector(codebook, features['descriptors'])
+            codebook = generate_codebook(features["descriptors"], name, write=True)
+            create_vlad_vector(codebook, features["descriptors"])
 
             feature_list.append(features)
             images_processed += 1
-            if images_processed % 100 == 0:
+            if images_processed % 20 == 0:
                 print(f"Processed {images_processed}/{img_total} images")
             """
             diff = difference_score(bear_features, features)
