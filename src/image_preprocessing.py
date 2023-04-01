@@ -40,14 +40,11 @@ def preprocess_images():
     images_processed = 0
     for root, dirs, files in os.walk(image_dir):
         for name in files:
+            if ".npy" in name:
+                continue
             filename = os.path.join(root, name)
-            image = cv2.imread(filename)
-            features = feature_extraction.get_features(image)
-
-            codebook = generate_codebook(features["descriptors"], name, write=True)
-            create_vlad_vector(codebook, features["descriptors"])
-
-            feature_list.append(features)
+            print(name)
+            feature_list.append(preprocess_image(filename)[1])
             images_processed += 1
             if images_processed % 20 == 0:
                 print(f"Processed {images_processed}/{img_total} images")
@@ -78,4 +75,18 @@ def preprocess_images():
     return feature_list
 
 
-preprocess_images()
+def preprocess_image(name: str):
+    """
+    Preprocess image
+    """
+    image = cv2.imread(name)
+    features = feature_extraction.get_features(image)
+
+    codebook = generate_codebook(features["descriptors"], os.path.basename(name), write=True)
+    v = create_vlad_vector(codebook, features["descriptors"])
+
+    return v, features
+
+
+if __name__ == '__main__':
+    preprocess_images()
