@@ -3,10 +3,13 @@ app:
   debug: true
 
 datasets:
-  images: 'data/image_test'
+  images: 'data/images'
 
 codebook:
   clusters: 24
 
 database:
   path: 'data/images.sqlite'
+
+histogram:
+  bin_size: 8

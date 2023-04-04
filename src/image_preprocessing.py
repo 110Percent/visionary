@@ -2,9 +2,10 @@ import os
 
 import cv2
 
+from codebook import generate_codebook
 from config import config
 from src import feature_extraction
-from codebook import generate_codebook
+from src.histogram_generation import generate_histogram
 from vlad import create_vlad_vector
 
 '''
@@ -92,7 +93,9 @@ def preprocess_image(name: str):
     )
     v = create_vlad_vector(codebook, features["descriptors"])
 
-    return v, features
+    histogram = generate_histogram(image)
+
+    return v, histogram, features
 
 
 if __name__ == "__main__":

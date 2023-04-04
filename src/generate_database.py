@@ -39,10 +39,11 @@ async def parse_image(image_name: str, table_name: str, engine) -> None:
     None
     """
 
-    v, f = preprocess_image(image_name)
-    columns = ["image_title", "vlad", "comparison_2", "comparison_3"]
+    v, h, f = preprocess_image(image_name)
+    columns = ["image_title", "vlad", "histogram", "comparison_3"]
     img_data = pd.DataFrame(
-        [[os.path.basename(image_name), str(v.tolist()), "", ""]], columns=columns
+        [[os.path.basename(image_name), str(v.tolist()), str(h.tolist()), ""]],
+        columns=columns,
     )
 
     img_data.to_sql(table_name, engine, if_exists="append", index=False)
