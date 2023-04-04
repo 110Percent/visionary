@@ -3,7 +3,10 @@ app:
   debug: true
 
 datasets:
-  images: 'data/images'
+  images: 'data/image_test'
 
 codebook:
-  clusters: 50
+  clusters: 24
+
+database:
+  path: 'data/images.sqlite'

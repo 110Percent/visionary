@@ -2,9 +2,11 @@ import asyncio
 import glob
 import os
 from pathlib import Path
+
 import pandas as pd
 from sqlalchemy import create_engine, MetaData
 
+from config import config
 from src.image_preprocessing import preprocess_image
 
 
@@ -20,8 +22,9 @@ from src.image_preprocessing import preprocess_image
 #             Column("comparison_3", String)
 #         )
 
-async def parse_image(image_name: str, table_name: str, connection) -> None:
-    """ async parse_image
+
+async def parse_image(image_name: str, table_name: str, engine) -> None:
+    """async parse_image
     Parses a single image asynchronously to be entered into the database
     Calculates and saves the distinguishing factors of the image
 
@@ -29,7 +32,7 @@ async def parse_image(image_name: str, table_name: str, connection) -> None:
     ----------
     image_name
     table_name
-    connection
+    engine
 
     Returns
     -------
@@ -37,38 +40,35 @@ async def parse_image(image_name: str, table_name: str, connection) -> None:
     """
 
     v, f = preprocess_image(image_name)
-    columns = ['image_title', 'vlad', 'comparison_2', 'comparison_3']
+    columns = ["image_title", "vlad", "comparison_2", "comparison_3"]
     img_data = pd.DataFrame(
-        [[os.path.basename(image_name), v, "", ""]],
-        columns=columns
+        [[os.path.basename(image_name), v, "", ""]], columns=columns
     )
-    img_data.to_sql(
-        table_name, connection, if_exists="append", index=False
-    )
+
+    img_data.to_sql(table_name, engine, if_exists="append", index=False)
 
 
 def initiate_database_creation() -> None:
-    """ initiate_database_creation
+    """initiate_database_creation
     Initiates creation of image_features database table.
 
     Returns
     -------
     None
     """
-    images = glob.glob("../data/images/*.jpg")
+    images = glob.glob(os.path.join("..", config.config["datasets"]["images"], "*"))
 
     # Open a SQLite connection to put results into
-    db_path = f'sqlite:///{Path(Path(__file__).parent.parent, "images.sqlite")}'
+    db_path = f'sqlite:///{Path(Path(__file__).parent.parent, config.config["database"]["path"])}'
     engine = create_engine(db_path, echo=True)
-    sqlite_connection = engine.connect()
 
     meta = MetaData()
     # setup_table('image_features', meta)
     meta.create_all(engine)
 
     for image_name in images:
-        asyncio.run(parse_image(image_name, "image_features", sqlite_connection))
+        asyncio.run(parse_image(image_name, "image_features", engine))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     initiate_database_creation()
