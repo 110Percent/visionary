@@ -23,11 +23,11 @@ def similarity_score(query_img, test_name, connection):
     query_histogram = generate_histogram(query_img)
 
     vlad_distance = np.linalg.norm(query_vlad_vector - test_vlad_vector)
-    vlad_score = 1 / (np.exp(vlad_distance))
+    vlad_score = 0.5 / (np.exp(vlad_distance))
 
     histogram_distance = np.linalg.norm(query_histogram - test_histogram)
     histogram_score = 1 / (np.exp(histogram_distance))
 
-    print(vlad_score, histogram_score)
     score = vlad_score + histogram_score
+    # print(test_name, vlad_score, histogram_score, score)
     return score
