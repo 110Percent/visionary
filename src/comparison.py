@@ -1,22 +1,19 @@
-import os
+import json
 
-import cv2
 import numpy as np
+from sqlalchemy import text
 
-from config import config
-from codebook import load_codebook, generate_codebook
+from codebook import generate_codebook
 from feature_extraction import get_features
 from vlad import create_vlad_vector
 
 
-def similarity_score(query_img, test_name):
-    test_codebook = load_codebook(test_name)
-    test_img_path = os.path.join(
-        config.get_path(config.config["datasets"]["images"]), test_name
-    )
-    test_img = cv2.imread(test_img_path)
-    test_features = get_features(test_img)
-    test_vlad_vector = create_vlad_vector(test_codebook, test_features["descriptors"])
+def similarity_score(query_img, test_name, connection):
+    row = connection.execute(
+        text("SELECT * FROM image_features WHERE image_title = :title"),
+        {"title": test_name},
+    ).fetchone()
+    test_vlad_vector = np.array(json.loads(row[1]))
 
     features = get_features(query_img)
     query_codebook = generate_codebook(features["descriptors"])

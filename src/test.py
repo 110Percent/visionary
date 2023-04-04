@@ -1,13 +1,12 @@
 import os
 import random
+from pathlib import Path
 
 import cv2
+from sqlalchemy import create_engine, MetaData, text
 
 from config import config
-from src import feature_extraction
-from src.codebook import load_codebook, generate_codebook
 from src.comparison import similarity_score
-from src.vlad import create_vlad_vector
 
 img_dir = config.get_path(config.config["datasets"]["images"])
 
@@ -34,15 +33,22 @@ def random_test():
     cv2.destroyAllWindows()
     """
 
+    db_path = f'sqlite:///{Path(Path(__file__).parent.parent, config.config["database"]["path"])}'
+    engine = create_engine(db_path)
+    meta = MetaData()
+    meta.create_all(engine)
+    connection = engine.connect()
+
     max_score = 0
     closest_file = ""
 
-    for root, dirs, files in os.walk(img_dir):
-        for filename in files:
-            score = similarity_score(img, filename)
-            if score > max_score:
-                max_score = score
-                closest_file = filename
+    rows = connection.execute(text("SELECT * FROM image_features")).fetchall()
+    for row in rows:
+        name = row[0]
+        score = similarity_score(img, name, connection)
+        if score > max_score:
+            max_score = score
+            closest_file = name
 
     print(img_path)
     print(closest_file)
