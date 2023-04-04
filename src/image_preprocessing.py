@@ -43,8 +43,10 @@ def preprocess_images():
             if ".npy" in name:
                 continue
             filename = os.path.join(root, name)
-            print(name)
-            feature_list.append(preprocess_image(filename)[1])
+            preprocessed = preprocess_image(filename)[1]
+            if preprocessed is None:
+                continue
+            feature_list.append(preprocessed)
             images_processed += 1
             if images_processed % 20 == 0:
                 print(f"Processed {images_processed}/{img_total} images")
@@ -82,11 +84,16 @@ def preprocess_image(name: str):
     image = cv2.imread(name)
     features = feature_extraction.get_features(image)
 
-    codebook = generate_codebook(features["descriptors"], os.path.basename(name), write=True)
+    if features["descriptors"].shape[0] < config.config["codebook"]["clusters"]:
+        return None, None
+
+    codebook = generate_codebook(
+        features["descriptors"], os.path.basename(name), write=True
+    )
     v = create_vlad_vector(codebook, features["descriptors"])
 
     return v, features
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     preprocess_images()
