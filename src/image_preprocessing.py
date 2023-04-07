@@ -5,6 +5,7 @@ import cv2
 from codebook import generate_codebook
 from config import config
 from src import feature_extraction
+from src.bow_generation import generate_bow
 from src.histogram_generation import generate_histogram
 from vlad import create_vlad_vector
 
@@ -95,7 +96,9 @@ def preprocess_image(name: str):
 
     histogram = generate_histogram(image)
 
-    return v, histogram, features
+    bow = generate_bow(image)
+
+    return [v, histogram, bow, features]
 
 
 if __name__ == "__main__":

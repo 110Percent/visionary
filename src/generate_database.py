@@ -39,10 +39,19 @@ async def parse_image(image_name: str, table_name: str, engine) -> None:
     None
     """
 
-    v, h, f = preprocess_image(image_name)
+    f_list = preprocess_image(image_name)
+
+    if len(f_list) != 4:
+        return
+
+    v = f_list[0]
+    h = f_list[1]
+    b = f_list[2]
+    f = f_list[3]
+
     columns = ["image_title", "vlad", "histogram", "comparison_3"]
     img_data = pd.DataFrame(
-        [[os.path.basename(image_name), str(v.tolist()), str(h.tolist()), ""]],
+        [[os.path.basename(image_name), str(v.tolist()), str(h.tolist()), str(b.tolist())]],
         columns=columns,
     )
 
