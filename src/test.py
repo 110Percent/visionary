@@ -7,6 +7,7 @@ from sqlalchemy import create_engine, MetaData, text
 
 from config import config
 from src.comparison import similarity_score
+from src.image_preprocessing import preprocess_raw
 
 img_dir = config.get_path(config.config["datasets"]["images"])
 
@@ -58,10 +59,12 @@ def random_test():
     max_score = 0
     closest_file = ""
 
+    query_features = preprocess_raw(img)
+
     rows = connection.execute(text("SELECT * FROM image_features")).fetchall()
     for row in rows:
         name = row[0]
-        score = similarity_score(img, name, connection)
+        score = similarity_score(query_features, name, connection)
         if score > max_score:
             max_score = score
             closest_file = name

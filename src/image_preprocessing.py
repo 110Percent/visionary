@@ -84,14 +84,16 @@ def preprocess_image(name: str):
     Preprocess image
     """
     image = cv2.imread(name)
+    return preprocess_raw(image)
+
+
+def preprocess_raw(image):
     features = feature_extraction.get_features(image)
 
     if features["descriptors"].shape[0] < config.config["codebook"]["clusters"]:
         return None, None
 
-    codebook = generate_codebook(
-        features["descriptors"], os.path.basename(name), write=True
-    )
+    codebook = generate_codebook(features["descriptors"])
     v = create_vlad_vector(codebook, features["descriptors"])
 
     histogram = generate_histogram(image)

@@ -49,9 +49,16 @@ async def parse_image(image_name: str, table_name: str, engine) -> None:
     b = f_list[2]
     f = f_list[3]
 
-    columns = ["image_title", "vlad", "histogram", "comparison_3"]
+    columns = ["image_title", "vlad", "histogram", "feature_bagowords"]
     img_data = pd.DataFrame(
-        [[os.path.basename(image_name), str(v.tolist()), str(h.tolist()), str(b.tolist())]],
+        [
+            [
+                os.path.basename(image_name),
+                str(v.tolist()),
+                str(h.tolist()),
+                str(b.tolist()),
+            ]
+        ],
         columns=columns,
     )
 
