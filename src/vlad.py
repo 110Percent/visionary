@@ -17,4 +17,10 @@ def create_vlad_vector(codebook, descriptors):
     vlad = vlad_matrix.flatten()
     vlad /= np.sqrt(np.sum(vlad**2))
 
-    return vlad
+    bow_vector = np.zeros(codebook.shape[0])
+    for label in labels:
+        bow_vector[label] += 1
+
+    bow_vector = bow_vector / np.linalg.norm(bow_vector)
+
+    return vlad, bow_vector

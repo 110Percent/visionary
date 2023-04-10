@@ -5,7 +5,7 @@ import cv2
 from codebook import generate_codebook
 from config import config
 from src import feature_extraction
-from src.bow_generation import generate_bow
+from src.haar_wavelet import create_haar_wavelet_vector
 from src.histogram_generation import generate_histogram
 from vlad import create_vlad_vector
 
@@ -94,13 +94,13 @@ def preprocess_raw(image):
         return None, None
 
     codebook = generate_codebook(features["descriptors"])
-    v = create_vlad_vector(codebook, features["descriptors"])
+    v, bow = create_vlad_vector(codebook, features["descriptors"])
 
     histogram = generate_histogram(image)
 
-    bow = generate_bow(image)
+    wavelet = create_haar_wavelet_vector(image)
 
-    return [v, histogram, bow, features]
+    return [v, histogram, bow, wavelet, features]
 
 
 if __name__ == "__main__":
