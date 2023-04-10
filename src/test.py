@@ -15,8 +15,15 @@ img_dir = config.get_path(config.config["datasets"]["images"])
 
 
 def get_random_image():
-    filenames = os.listdir(img_dir)
-    img_path = os.path.join(img_dir, random.choice(filenames))
+    db_path = f'sqlite:///{Path(Path(__file__).parent.parent, config.config["database"]["path"])}'
+    engine = create_engine(db_path)
+    meta = MetaData()
+    meta.create_all(engine)
+    connection = engine.connect()
+    rows = connection.execute(
+        text("SELECT image_title FROM image_features ORDER BY RANDOM() LIMIT 1")
+    ).fetchall()
+    img_path = os.path.join(img_dir, rows[0][0])
     return img_path
 
 
